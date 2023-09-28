@@ -55,8 +55,21 @@ def call_predict(request = request):
     if isinstance(prediction, int):
         ret = json.dumps({'cluster': prediction}, cls=NpEncoder)
 
-
     return app.response_class(response=ret, mimetype='application/json')
+
+if __name__ == '__main__':
+    args = sys.argv[1:]
+    if len(args) < 1:
+        args.append('modelos/modelo_kmeans.joblib')
+    if len(args) < 2:
+        args.append('8080')
+
+    print(args)
+
+    modelo_kmeans = joblib.load(args[0])
+    # app.run(port=8080, host='0.0.0.0')
+    app.run(port=args[1], host='0.0.0.0')
+    pass
 
 @app.route("/previsao", methods=['GET', 'POST'])
 def call_predict(request = request):
