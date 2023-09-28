@@ -1,10 +1,10 @@
 {
   "models": {
-    "modelo01": {
+    "modelo_kmeans": {
       "version": "V01",
       "url": "http://serving01:8080/predict"
     },
-    "modelo02": {
+    "modelo_previsao": {
       "version": "V01",
       "url": "http://serving02:8080/predict"
     }
