@@ -53,7 +53,7 @@ def call_predict(request = request):
     if isinstance(prediction, int):
         ret = json.dumps({'cluster': prediction}, cls=NpEncoder)
 
-    return app.response_class(response=ret, mimetype='application/json')
+    return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
 
 if __name__ == '__main__':
     args = sys.argv[1:]
