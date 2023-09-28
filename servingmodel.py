@@ -36,8 +36,6 @@ def call_predict(request = request):
 
     if campos.shape[0] == 0:
         return "Dados de chamada da API estão incorretos.", 400
-
-    independentes = ['credit_type', 'Credit_Score', 'income', 'loan_amount', 'age', 'loan_purpose', 'Gender', 'lump_sum_payment']
     
     cat = ['credit_type', 'age', 'loan_purpose', 'Gender', 'lump_sum_payment']
 
