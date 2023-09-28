@@ -45,13 +45,13 @@ def call_predict(request = request):
 
     for categorical in cat:
         if categorical not in label_enconders:
-            label_enconders[categorical] = joblib.load( 'modelos/'+categorical+'_label_encoder.joblib')
+            label_enconders[categorical] = joblib.load( 'models/'+categorical+'_label_encoder.joblib')
 
         campos[categorical] = label_enconders[categorical].transform(campos[categorical])
 
     print("Predizendo para {0} registros".format(campos.shape[0]))
 
-    prediction = modelo_cluster.predict(campos)
+    prediction = modelo_kmeans.predict(campos)
     if isinstance(prediction, int):
         ret = json.dumps({'cluster': prediction}, cls=NpEncoder)
 
@@ -60,7 +60,7 @@ def call_predict(request = request):
 if __name__ == '__main__':
     args = sys.argv[1:]
     if len(args) < 1:
-        args.append('modelos/modelo_kmeans.joblib')
+        args.append('models/modelo_kmeans.joblib')
     if len(args) < 2:
         args.append('8080')
 
@@ -89,7 +89,7 @@ def call_predict(request = request):
 
     for categorical in cat:
         if categorical not in label_enconders:
-            label_enconders[categorical] = joblib.load( 'modelos/'+categorical+'_label_encoder.joblib')
+            label_enconders[categorical] = joblib.load( 'models/'+categorical+'_label_encoder.joblib')
 
         campos[categorical] = label_enconders[categorical].transform(campos[categorical])
 
@@ -107,7 +107,7 @@ def call_predict(request = request):
 if __name__ == '__main__':
     args = sys.argv[1:]
     if len(args) < 1:
-        args.append('modelos/modelo_regressao.joblib')
+        args.append('models/modelo_regressao.joblib')
     if len(args) < 2:
         args.append('8080')
 

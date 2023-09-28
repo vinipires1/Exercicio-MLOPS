@@ -4,7 +4,7 @@
       "version": "V01",
       "url": "http://serving01:8080/predict"
     },
-    "modelo_previsao": {
+    "modelo_regressao": {
       "version": "V01",
       "url": "http://serving02:8080/predict"
     }
