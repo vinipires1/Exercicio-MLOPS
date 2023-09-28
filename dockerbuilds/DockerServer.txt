@@ -1,5 +1,5 @@
-FROM python:3.7
-LABEL maintainer="elthon@alumni.usp.br"
+FROM python:3.10.2
+LABEL maintainer="vinipires2013@gmail.com"
 LABEL version="1.0"
 
 # Instala aplicações básicas para caso precise vasculhar um contêiner da imagem
