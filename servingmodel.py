@@ -95,8 +95,8 @@ def call_predict(request = request):
 
     print("Predizendo para {0} registros".format(campos.shape[0]))
 
-    prediction = modelo_previsao.predict(campos)
-    prediction_proba = modelo_previsao.predict_proba(campos)
+    prediction = modelo_regressao.predict(campos)
+    prediction_proba = modelo_regressao.predict_proba(campos)
     if isinstance(prediction, int):
         ret = json.dumps({'Status': prediction,
                           'Probabilidade': prediction_proba}, cls=NpEncoder)
@@ -113,7 +113,7 @@ if __name__ == '__main__':
 
     print(args)
 
-    modelo_previsao = joblib.load(args[0])
+    modelo_regressao = joblib.load(args[0])
     # app.run(port=8080, host='0.0.0.0')
     app.run(port=args[1], host='0.0.0.0')
     pass
