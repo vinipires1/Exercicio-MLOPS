@@ -27,7 +27,7 @@ def call_home(request = request):
         "args": str(sys.argv),
     })
 
-@app.route("/predict", methods=['GET', 'POST'])
+@app.route("/cluster", methods=['GET', 'POST'])
 def call_predict(request = request):
     print(request.values)
 
@@ -37,31 +37,70 @@ def call_predict(request = request):
     if campos.shape[0] == 0:
         return "Dados de chamada da API estão incorretos.", 400
 
-    for col in modelo.independentcols:
-        if col not in campos.columns:
-            campos[col] = 0
-    x = campos[modelo.independentcols]
+    independentes = ['credit_type', 'Credit_Score', 'income', 'loan_amount', 'age', 'loan_purpose', 'Gender', 'lump_sum_payment']
+    
+    cat = ['credit_type', 'age', 'loan_purpose', 'Gender', 'lump_sum_payment']
 
-    prediction = modelo.predict(x)
+    label_enconders = {}
+
+    for categorical in cat:
+        if categorical not in label_enconders:
+            label_enconders[categorical] = joblib.load( 'modelos/'+categorical+'_label_encoder.joblib')
+
+        campos[categorical] = label_enconders[categorical].transform(campos[categorical])
+
+    print("Predizendo para {0} registros".format(campos.shape[0]))
+
+    prediction = modelo_cluster.predict(campos)
+    if isinstance(prediction, int):
+        ret = json.dumps({'cluster': prediction}, cls=NpEncoder)
 
 
-    ret = {'prediction': list(prediction)}
-    if hasattr(modelo, 'predict_proba'):
-        predict_proba = modelo.predict_proba(x)
-        ret['proba'] = list(predict_proba)
+    return app.response_class(response=ret, mimetype='application/json')
 
-    return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
+@app.route("/previsao", methods=['GET', 'POST'])
+def call_predict(request = request):
+    print(request.values)
+
+    json_ = request.json
+    campos = pd.DataFrame(json_)
+
+    if campos.shape[0] == 0:
+        return "Dados de chamada da API estão incorretos.", 400
+
+    independentes = ['credit_type', 'Credit_Score', 'income', 'loan_amount', 'age', 'loan_purpose', 'Gender', 'lump_sum_payment', 'cluster']
+    
+    cat = ['credit_type', 'age', 'loan_purpose', 'Gender', 'lump_sum_payment', 'cluster']
+
+    label_enconders = {}
+
+    for categorical in cat:
+        if categorical not in label_enconders:
+            label_enconders[categorical] = joblib.load( 'modelos/'+categorical+'_label_encoder.joblib')
+
+        campos[categorical] = label_enconders[categorical].transform(campos[categorical])
+
+    print("Predizendo para {0} registros".format(campos.shape[0]))
+
+    prediction = modelo_previsao.predict(campos)
+    prediction_proba = modelo_previsao.predict_proba(campos)
+    if isinstance(prediction, int):
+        ret = json.dumps({'Status': prediction,
+                          'Probabilidade': prediction_proba}, cls=NpEncoder)
+
+
+    return app.response_class(response=ret, mimetype='application/json')
 
 if __name__ == '__main__':
     args = sys.argv[1:]
     if len(args) < 1:
-        args.append('models/modelo01.joblib')
+        args.append('modelos/modelo_regressao.joblib')
     if len(args) < 2:
         args.append('8080')
 
     print(args)
 
-    modelo = joblib.load(args[0])
+    modelo_previsao = joblib.load(args[0])
     # app.run(port=8080, host='0.0.0.0')
     app.run(port=args[1], host='0.0.0.0')
     pass
