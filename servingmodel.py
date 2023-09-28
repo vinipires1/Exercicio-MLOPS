@@ -27,7 +27,7 @@ def call_home(request = request):
         "args": str(sys.argv),
     })
 
-@app.route("/cluster", methods=['GET', 'POST'])
+@app.route("/modelo_kmeans", methods=['GET', 'POST'])
 def call_predict(request = request):
     print(request.values)
 
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     app.run(port=args[1], host='0.0.0.0')
     pass
 
-@app.route("/previsao", methods=['GET', 'POST'])
+@app.route("/modelo_regressao", methods=['GET', 'POST'])
 def call_predict(request = request):
     print(request.values)
 
