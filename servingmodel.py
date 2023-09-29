@@ -18,7 +18,7 @@ class NpEncoder(json.JSONEncoder):
 
 app = Flask(__name__)
 app.json_encoder = NpEncoder
-modelo = None
+modelo_kmeans = None
 
 @app.route("/", methods=['GET', 'POST'])
 def call_home(request = request):
@@ -36,32 +36,18 @@ def call_predict(request=request):
 
     if campos.shape[0] == 0:
         return "Dados de chamada da API estão incorretos.", 400
-    
-    cat = ['credit_type', 'age', 'loan_purpose', 'Gender', 'lump_sum_payment']
 
-    label_enconders = {}
+    for col in modelo_kmeans.var_independentes:
+        if col not in campos.columns:
+            campos[col] = 0
 
-    for categorical in cat:
-        if categorical not in label_enconders:
-            label_enconders[categorical] = joblib.load('models/' + categorical + '_label_encoder.joblib')
+    x = campos[modelo_kmeans.var_independentes]
 
-        campos[categorical] = label_enconders[categorical].transform(campos[categorical])
+    prediction = modelo_kmeans.predict(x)
 
-    print("Predizendo para {0} registros".format(campos.shape[0]))
+    ret = {'Predição': list(prediction)}
 
-    ret = None  
-    
-    try:
-        prediction = modelo_kmeans.predict(campos)
-        if isinstance(prediction, int):
-            ret = json.dumps({'cluster': prediction}, cls=NpEncoder)
-    except Exception as e:
-        print(f"Erro ao fazer a previsão: {str(e)}")
-
-    if ret is not None:
-        return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
-    else:
-        return "Erro ao fazer a previsão.", 500
+    return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
     
 
 if __name__ == '__main__':
