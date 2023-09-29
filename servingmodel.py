@@ -83,29 +83,25 @@ def call_predict(request = request):
     json_ = request.json
     campos = pd.DataFrame(json_)
 
+    cat = ['credit_type', 'age', 'loan_purpose', 'Gender', 'lump_sum_payment']
+
+    label_enconders = {}
+    
+    for categorical in cat:
+            if categorical not in label_enconders:
+                label_enconders[categorical] = joblib.load( 'models/'+categorical+'_label_encoder.joblib')
+
+            campos[categorical] = label_enconders[categorical].transform(campos[categorical])
+
     if campos.shape[0] == 0:
         return "Dados de chamada da API estão incorretos.", 400
 
-    cat = ['credit_type', 'age', 'loan_purpose', 'Gender', 'lump_sum_payment', 'cluster']
-
-    label_enconders = {}
-
-    for categorical in cat:
-        if categorical not in label_enconders:
-            label_enconders[categorical] = joblib.load( 'models/'+categorical+'_label_encoder.joblib')
-
-        campos[categorical] = label_enconders[categorical].transform(campos[categorical])
-
-    print("Predizendo para {0} registros".format(campos.shape[0]))
-
-    prediction = modelo_regressao.predict(campos)
     prediction_proba = modelo_regressao.predict_proba(campos)
-    if isinstance(prediction, int):
-        ret = json.dumps({'Status': prediction,
-                          'Probabilidade': prediction_proba}, cls=NpEncoder)
+    
+    ret = {f'Probabilidade de {list((prediction_proba[0][1]).round(4)*100)}% de Fraude.'}
 
+    return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
 
-    return app.response_class(response=ret, mimetype='application/json')
 
 if __name__ == '__main__':
     args = sys.argv[1:]
@@ -117,6 +113,53 @@ if __name__ == '__main__':
     print(args)
 
     modelo_regressao = joblib.load(args[0])
+    # app.run(port=8080, host='0.0.0.0')
+    app.run(port=args[1], host='0.0.0.0')
+    pass
+
+
+@app.route("/modelo_randomforest", methods=['GET', 'POST'])
+def call_predict(request = request):
+    print(request.values)
+
+    json_ = request.json
+    campos = pd.DataFrame(json_)
+
+    cat = ['credit_type', 'age', 'loan_purpose', 'Gender', 'lump_sum_payment']
+
+    label_enconders = {}
+    
+    for categorical in cat:
+            if categorical not in label_enconders:
+                label_enconders[categorical] = joblib.load( 'models/'+categorical+'_label_encoder.joblib')
+
+            campos[categorical] = label_enconders[categorical].transform(campos[categorical])
+
+    if campos.shape[0] == 0:
+        return "Dados de chamada da API estão incorretos.", 400
+
+    predict = modelo_randomforest.predict(campos)
+    
+    if predict == 0:
+        classif = 'Adimplente'
+    else:
+        classif = 'Inadimplente'
+
+    ret = {f'Classificação: {list(predict)} - {list(classif)}'}
+
+    return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
+
+
+if __name__ == '__main__':
+    args = sys.argv[1:]
+    if len(args) < 1:
+        args.append('models/modelo_randomforest.joblib')
+    if len(args) < 2:
+        args.append('8080')
+
+    print(args)
+
+    modelo_randomforest = joblib.load(args[0])
     # app.run(port=8080, host='0.0.0.0')
     app.run(port=args[1], host='0.0.0.0')
     pass

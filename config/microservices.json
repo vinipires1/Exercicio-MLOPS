@@ -7,6 +7,10 @@
     "modelo_regressao": {
       "version": "V01",
       "url": "http://serving02:8080/modelo_regressao"
+    },
+    "modelo_randomforest": {
+      "version": "V01",
+      "url": "http://serving03:8080/modelo_randomforest"
     }
   }
 }
