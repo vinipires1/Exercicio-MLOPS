@@ -58,8 +58,7 @@ def call_predict(request=request):
     else:
         persona = 'Ouro'
     
-    ret = {'Cluster': prediction,
-           'Persona': persona}
+    ret = {f'Cluster: {prediction}, Persona: {persona}'}
 
     return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
     
