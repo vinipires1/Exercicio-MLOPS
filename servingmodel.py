@@ -96,7 +96,7 @@ def call_predict(request = request):
             campos[categorical] = label_enconders[categorical].transform(campos[categorical])
 
     if campos.shape[0] == 0:
-        return "Dados de chamada da API estão incorretos.", 400
+        return "Dados de chamada incorretos.", 400
 
     prediction_proba = modelo_regressao.predict_proba(campos)
     
@@ -147,7 +147,7 @@ def call_predict(request = request):
             campos[categorical] = label_enconders[categorical].transform(campos[categorical])
 
     if campos.shape[0] == 0:
-        return "Dados de chamada da API estão incorretos.", 400
+        return "Dados incorretos.", 400
 
     predict = modelo_randomforest.predict(campos)
     
