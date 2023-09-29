@@ -19,6 +19,8 @@ class NpEncoder(json.JSONEncoder):
 app = Flask(__name__)
 app.json_encoder = NpEncoder
 modelo_kmeans = None
+modelo_regressao = None
+modelo_randomforest = None
 
 @app.route("/", methods=['GET', 'POST'])
 def call_home(request = request):
