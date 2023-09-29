@@ -40,7 +40,7 @@ def call_predict(request=request):
     
     for categorical in cat:
             if categorical not in label_enconders:
-                label_enconders[categorical] = joblib.load( 'models/'+categorical+'_label_encoder.joblib')
+                label_enconders[categorical] = joblib.load('models/'+categorical+'_label_encoder.joblib')
 
             campos[categorical] = label_enconders[categorical].transform(campos[categorical])
 
@@ -56,8 +56,8 @@ def call_predict(request=request):
     else:
         persona = 'Ouro'
     
-    ret = {'Cluster': list(prediction),
-           'Persona': list(persona)}
+    ret = {'Cluster': prediction,
+           'Persona': persona}
 
     return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
     
@@ -89,7 +89,7 @@ def call_predict(request = request):
     
     for categorical in cat:
             if categorical not in label_enconders:
-                label_enconders[categorical] = joblib.load( 'models/'+categorical+'_label_encoder.joblib')
+                label_enconders[categorical] = joblib.load('models/'+categorical+'_label_encoder.joblib')
 
             campos[categorical] = label_enconders[categorical].transform(campos[categorical])
 
