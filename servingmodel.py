@@ -58,7 +58,8 @@ def call_predict(request=request):
     else:
         persona = 'Ouro'
     
-    ret = {f'Cluster: {prediction}, Persona: {persona}'}
+    ret = {'Cluster': prediction,
+           'Persona': persona}
 
     return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
     
@@ -99,7 +100,16 @@ def call_predict(request = request):
 
     prediction_proba = modelo_regressao.predict_proba(campos)
     
-    ret = {f'Probabilidade de {list((prediction_proba[0][1]).round(4)*100)}% de Fraude.'}
+    if prediction_proba <= 0.20:
+        fraude_status = 'Baixo Risco'
+    elif prediction_proba > 0.20 & prediction_proba <= 0.50:
+        fraude_status = 'Médio Risco'
+    else:
+        fraude_status = 'Grande Risco'
+    
+    ret = {'Probabilidade de Fraude:': prediction_proba[0][1],
+           'Status': fraude_status}
+        
 
     return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
 
@@ -146,7 +156,8 @@ def call_predict(request = request):
     else:
         classif = 'Inadimplente'
 
-    ret = {f'Classificação: {list(predict)} - {list(classif)}'}
+    ret = {'Status': predict,
+           'Classificação': classif}
 
     return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
 
