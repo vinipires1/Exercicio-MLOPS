@@ -34,16 +34,20 @@ def call_predict(request=request):
     json_ = request.json
     campos = pd.DataFrame(json_)
 
+    cat = ['credit_type', 'age', 'loan_purpose', 'Gender', 'lump_sum_payment']
+
+    label_enconders = {}
+    
+    for categorical in cat:
+            if categorical not in label_enconders:
+                label_enconders[categorical] = joblib.load( 'models/'+categorical+'_label_encoder.joblib')
+
+            campos[categorical] = label_enconders[categorical].transform(campos[categorical])
+
     if campos.shape[0] == 0:
         return "Dados de chamada da API estão incorretos.", 400
 
-    for col in modelo_kmeans.var_independentes:
-        if col not in campos.columns:
-            campos[col] = 0
-
-    x = campos[modelo_kmeans.var_independentes]
-
-    prediction = modelo_kmeans.predict(x)
+    prediction = modelo_kmeans.predict(campos)
 
     ret = {'Predição': list(prediction)}
 
