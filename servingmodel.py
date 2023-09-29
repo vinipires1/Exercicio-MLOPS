@@ -49,7 +49,15 @@ def call_predict(request=request):
 
     prediction = modelo_kmeans.predict(campos)
 
-    ret = {'Predição': list(prediction)}
+    if prediction == 0:
+        persona = 'Bronze'
+    elif prediction == 1:
+        persona = 'Prata'
+    else:
+        persona = 'Ouro'
+    
+    ret = {'Cluster': list(prediction),
+           'Persona': list(persona)}
 
     return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
     
