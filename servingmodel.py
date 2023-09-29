@@ -28,7 +28,7 @@ def call_home(request = request):
     })
 
 @app.route("/modelo_kmeans", methods=['GET', 'POST'])
-def call_predict(request = request):
+def call_predict(request=request):
     print(request.values)
 
     json_ = request.json
@@ -43,17 +43,26 @@ def call_predict(request = request):
 
     for categorical in cat:
         if categorical not in label_enconders:
-            label_enconders[categorical] = joblib.load( 'models/'+categorical+'_label_encoder.joblib')
+            label_enconders[categorical] = joblib.load('models/' + categorical + '_label_encoder.joblib')
 
         campos[categorical] = label_enconders[categorical].transform(campos[categorical])
 
     print("Predizendo para {0} registros".format(campos.shape[0]))
 
-    prediction = modelo_kmeans.predict(campos)
-    if isinstance(prediction, int):
-        ret = json.dumps({'cluster': prediction}, cls=NpEncoder)
+    ret = None  
+    
+    try:
+        prediction = modelo_kmeans.predict(campos)
+        if isinstance(prediction, int):
+            ret = json.dumps({'cluster': prediction}, cls=NpEncoder)
+    except Exception as e:
+        print(f"Erro ao fazer a previsão: {str(e)}")
 
-    return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
+    if ret is not None:
+        return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
+    else:
+        return "Erro ao fazer a previsão.", 500
+    
 
 if __name__ == '__main__':
     args = sys.argv[1:]
@@ -79,8 +88,6 @@ def call_predict(request = request):
     if campos.shape[0] == 0:
         return "Dados de chamada da API estão incorretos.", 400
 
-    independentes = ['credit_type', 'Credit_Score', 'income', 'loan_amount', 'age', 'loan_purpose', 'Gender', 'lump_sum_payment', 'cluster']
-    
     cat = ['credit_type', 'age', 'loan_purpose', 'Gender', 'lump_sum_payment', 'cluster']
 
     label_enconders = {}
