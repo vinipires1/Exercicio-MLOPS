@@ -30,7 +30,7 @@ def call_home(request = request):
     })
 
 @app.route("/modelo_kmeans", methods=['GET', 'POST'])
-def call_predict(request=request):
+def call_modelo_kmeans(request=request):
     print(request.values)
 
     json_ = request.json
@@ -64,22 +64,8 @@ def call_predict(request=request):
     return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
     
 
-if __name__ == '__main__':
-    args = sys.argv[1:]
-    if len(args) < 1:
-        args.append('models/modelo_kmeans.joblib')
-    if len(args) < 2:
-        args.append('8080')
-
-    print(args)
-
-    modelo_kmeans = joblib.load(args[0])
-    # app.run(port=8080, host='0.0.0.0')
-    app.run(port=args[1], host='0.0.0.0')
-    pass
-
 @app.route("/modelo_regressao", methods=['GET', 'POST'])
-def call_predict(request = request):
+def call_modelo_regressao(request=request):
     print(request.values)
 
     json_ = request.json
@@ -114,23 +100,8 @@ def call_predict(request = request):
     return app.response_class(response=json.dumps(ret, cls=NpEncoder), mimetype='application/json')
 
 
-if __name__ == '__main__':
-    args = sys.argv[1:]
-    if len(args) < 1:
-        args.append('models/modelo_regressao.joblib')
-    if len(args) < 2:
-        args.append('8080')
-
-    print(args)
-
-    modelo_regressao = joblib.load(args[0])
-    # app.run(port=8080, host='0.0.0.0')
-    app.run(port=args[1], host='0.0.0.0')
-    pass
-
-
 @app.route("/modelo_xgb", methods=['GET', 'POST'])
-def call_predict(request = request):
+def call_modelo_xgb(request=request):
     print(request.values)
 
     json_ = request.json
@@ -165,13 +136,15 @@ def call_predict(request = request):
 if __name__ == '__main__':
     args = sys.argv[1:]
     if len(args) < 1:
-        args.append('models/modelo_xgb.joblib')
+        args.append('models/modelo_kmeans.joblib')
     if len(args) < 2:
         args.append('8080')
 
     print(args)
 
-    modelo_xgb = joblib.load(args[0])
+    modelo_kmeans = joblib.load('models/modelo_kmeans.joblib')
+    modelo_regressao = joblib.load('models/modelo_regressao.joblib')
+    modelo_xgb = joblib.load('models/modelo_xgb.joblib')
     # app.run(port=8080, host='0.0.0.0')
     app.run(port=args[1], host='0.0.0.0')
     pass
