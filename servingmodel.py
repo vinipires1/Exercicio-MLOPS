@@ -86,14 +86,14 @@ def call_modelo_regressao(request=request):
 
     prediction_proba = modelo_regressao.predict_proba(campos)
     
-    if prediction_proba <= 0.20:
+    if prediction_proba[0][1] <= 0.20:
         fraude_status = 'Baixo Risco'
-    elif prediction_proba > 0.20 & prediction_proba <= 0.50:
+    elif prediction_proba[0][1] > 0.20 & prediction_proba[0][1] <= 0.50:
         fraude_status = 'Médio Risco'
     else:
         fraude_status = 'Grande Risco'
     
-    ret = {'Probabilidade de Fraude:': prediction_proba,
+    ret = {'Probabilidade de Fraude:': (prediction_proba[0][1]).round(4),
            'Status': fraude_status}
         
 
