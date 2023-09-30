@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.json_encoder = NpEncoder
 modelo_kmeans = None
 modelo_regressao = None
-modelo_randomforest = None
+modelo_xgb = None
 
 @app.route("/", methods=['GET', 'POST'])
 def call_home(request = request):
@@ -107,7 +107,7 @@ def call_predict(request = request):
     else:
         fraude_status = 'Grande Risco'
     
-    ret = {'Probabilidade de Fraude:': prediction_proba[0][1],
+    ret = {'Probabilidade de Fraude:': prediction_proba,
            'Status': fraude_status}
         
 
@@ -129,7 +129,7 @@ if __name__ == '__main__':
     pass
 
 
-@app.route("/modelo_randomforest", methods=['GET', 'POST'])
+@app.route("/modelo_xgb", methods=['GET', 'POST'])
 def call_predict(request = request):
     print(request.values)
 
@@ -149,7 +149,7 @@ def call_predict(request = request):
     if campos.shape[0] == 0:
         return "Dados incorretos.", 400
 
-    predict = modelo_randomforest.predict(campos)
+    predict = modelo_xgb.predict(campos)
     
     if predict == 0:
         classif = 'Adimplente'
@@ -165,13 +165,13 @@ def call_predict(request = request):
 if __name__ == '__main__':
     args = sys.argv[1:]
     if len(args) < 1:
-        args.append('models/modelo_randomforest.joblib')
+        args.append('models/modelo_xgb.joblib')
     if len(args) < 2:
         args.append('8080')
 
     print(args)
 
-    modelo_randomforest = joblib.load(args[0])
+    modelo_xgb = joblib.load(args[0])
     # app.run(port=8080, host='0.0.0.0')
     app.run(port=args[1], host='0.0.0.0')
     pass

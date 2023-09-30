@@ -8,9 +8,9 @@
       "version": "V01",
       "url": "http://serving02:8080/modelo_regressao"
     },
-    "modelo_randomforest": {
+    "modelo_xgb": {
       "version": "V01",
-      "url": "http://serving03:8080/modelo_randomforest"
+      "url": "http://serving03:8080/modelo_xgb"
     }
   }
 }
