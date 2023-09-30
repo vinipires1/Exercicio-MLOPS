@@ -26,11 +26,6 @@ sudo docker run -d --network plat_network -p 443:8080 --restart always -v $(pwd)
 sudo docker stop 407e7a1796e8401b8c7fcf7e95a9246404b45da62ef403323cdccf858ecfb643
 sudo docker rm 407e7a1796e8401b8c7fcf7e95a9246404b45da62ef403323cdccf858ecfb643
 
-
-
-git clone https://github.com/vinipires1/Exercicio-MLOPS1.git
-
-
 sudo rm -r Exercicio-MLOPS
 sudo rm -r Exercicio-MLOPS1
 
