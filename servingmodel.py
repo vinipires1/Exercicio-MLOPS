@@ -88,7 +88,7 @@ def call_modelo_regressao(request=request):
     
     if prediction_proba[0][1] <= 0.20:
         fraude_status = 'Baixo Risco'
-    elif prediction_proba[0][1] > 0.20 & prediction_proba[0][1] <= 0.50:
+    elif prediction_proba[0][1] > 0.20 and prediction_proba[0][1] <= 0.50:
         fraude_status = 'Médio Risco'
     else:
         fraude_status = 'Grande Risco'
